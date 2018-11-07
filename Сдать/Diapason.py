@@ -1,5 +1,4 @@
 import copy
-#newfield = copy.deepcopy(oldfield)
 def index_2d(myList, v):
     for i, x in enumerate(myList.Field):
         if v in x:
