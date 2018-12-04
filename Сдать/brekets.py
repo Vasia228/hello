@@ -1,38 +1,44 @@
-example = "(????)"
-COUNTER=0
+origin="(?(??)"
 
-if len(example)%2!=0:
-    print("No variants")
+if len(origin)%2!=0 or origin[0]==")" or origin[-1]=="(":
+    print("Не корректные входные данные")
     raise SystemExit
 
-code={"(":1,")":-1,"?":0}
-arr=[]
-for e in example:
-    arr.append(code.get(e))
+origin="("+origin[1:-1]+")"
 
-def shrink(arr):
-    global COUNTER
-    print(arr)
-    if len(arr)==0:
-        COUNTER+=1
-        return 0
-    if arr[0]==-1 or arr[-1]==1:
-        return 0
+buf=[""]
+counters=[0]
+remaining=len(origin)
+deadlist=[]
+
+for elem in origin:
+    remaining-=1
+
+    if elem == "(" or elem==")":
+        data=-1
+        if elem=="(": data=1
+        for index in range(len(buf)):
+            buf[index]+=(elem)
+            counters[index]+=data
+            if counters[index] < 0 or counters[index]>remaining:
+                deadlist.append(index)    
+
     else:
-        arr[0],arr[-1]=1,-1
-    for i in range(len(arr)-1):
-        if arr[i]==1 and arr[i+1]==-1:
-            if len(arr)==2:
-                COUNTER+=1
-                return 0
-            arr=arr[:i]+arr[i+2:]
-    for i in range(len(arr)):
-        if arr[i]==0:
-            #if i > 0 and arr[i-1]==1:
-                #shrink(arr[:i-1]+arr[i+1:])
-            if i < (len(arr)-1) and arr[i+1]==-1: 
-                shrink(arr[:i]+arr[i+2:])
-            if i < (len(arr)-1) and arr[i+1]==0:
-                shrink(arr[:i]+arr[i+2:])
-shrink(arr)
-print(COUNTER)
+        for index in range(len(buf)):
+            if (counters[index]-1)>=0:
+                buf.append(buf[index]+")")
+                counters.append(counters[index]-1)
+            buf[index]+="("
+            counters[index]+=1
+            if counters[index]>remaining:
+                deadlist.append(index)
+                
+    for e in range(len(deadlist)):
+        deadlist[e]-=e 
+        buf.pop(deadlist[e])
+        counters.pop(deadlist[e])
+    deadlist.clear()
+print(origin)
+print(len(buf))
+
+
