@@ -1,4 +1,5 @@
-origin="(?(??)"
+origin="????????????????????"
+print(origin)
 
 if len(origin)%2!=0 or origin[0]==")" or origin[-1]=="(":
     print("Не корректные входные данные")
@@ -16,29 +17,27 @@ for elem in origin:
 
     if elem == "(" or elem==")":
         data=-1
-        if elem=="(": data=1
+        if elem=="(":
+            data=1
         for index in range(len(buf)):
             buf[index]+=(elem)
             counters[index]+=data
             if counters[index] < 0 or counters[index]>remaining:
-                deadlist.append(index)    
-
+                deadlist.append(index)
     else:
         for index in range(len(buf)):
             if (counters[index]-1)>=0:
                 buf.append(buf[index]+")")
                 counters.append(counters[index]-1)
-            buf[index]+="("
-            counters[index]+=1
-            if counters[index]>remaining:
+            if counters[index]+1<=remaining:
+                buf[index]+="("
+                counters[index]+=1
+            else:
                 deadlist.append(index)
-                
-    for e in range(len(deadlist)):
-        deadlist[e]-=e 
-        buf.pop(deadlist[e])
-        counters.pop(deadlist[e])
+    for e in deadlist:
+        buf[e]=buf.pop()
+        counters[e]=counters.pop()
     deadlist.clear()
-print(origin)
 print(len(buf))
 
 
